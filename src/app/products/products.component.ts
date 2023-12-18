@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { IProduct } from './product';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'pm-products',
@@ -8,10 +10,22 @@ import { Component, OnInit } from '@angular/core';
 export class ProductsComponent implements OnInit {
   constructor() {}
 
-  ngOnInit(): void {}
-
   pageTitle: string = 'Product List';
-  products: any[] = [
+  imageWidth: number = 50;
+  imageMargin: number = 2;
+  showImage: boolean = false;
+  private _listFilter: string = '';
+  get listFilter(): string {
+    return this._listFilter;
+  }
+
+  set listFilter(value: string) {
+    this._listFilter = value;
+    console.log('In setter:', value);
+    this.filteredProducts = this.performFilter(value);
+  }
+  filteredProducts: IProduct[] = [];
+  products: IProduct[] = [
     {
       productId: 1,
       productName: 'Leaf Rake',
@@ -63,4 +77,22 @@ export class ProductsComponent implements OnInit {
       imageUrl: 'assets/images/xbox-controller.png',
     },
   ];
+
+  performFilter(filterBy: string): IProduct[] {
+    filterBy = filterBy.toLocaleLowerCase();
+    return this.products.filter((product: IProduct) =>
+      product.productName.toLocaleLowerCase().includes(filterBy)
+    );
+  }
+
+  toggleImage(): void {
+    this.showImage = !this.showImage;
+  }
+  ngOnInit(): void {
+    this._listFilter = 'cart';
+  }
+
+  onRatingClicked(message: string): void {
+    this.pageTitle = 'Product List ' + message;
+  }
 }

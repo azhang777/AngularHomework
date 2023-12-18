@@ -18,9 +18,8 @@ a decorator is a function that adds metadata to class, its members or its method
 @Component({
   selector: 'pm-root',
   templateUrl: './app.component.html', //directive is a custom html element
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
-
 export class AppComponent {
   pageTitle: string = 'Angular: Getting Started';
 }
@@ -45,4 +44,21 @@ for example *ngIf: If logic and *ngFor: For loops
 these are usually placed into html tags and take in code value / methods
 * marks it as a structural directive
 Structural directives help us to power up our html dynamically
+
+4 Types of databinding:
+{{}} Interpolation
+<img [src]='value'> Property Binding
+<button (click)='toggleImage()'> Event Binding
+<input [(ngModel)]='listFilter' /> Two-Way Binding | Banana in a Box
+
+we can use pipes to transform data before they are rendered
+
+to specify strong types and components, we can define interfaces
+
+A lifecycle hook is an interface we implement to write code when a component lifecycle 
+event occurs
+
+OnInit: Perform component initialization, retrieve data
+OnChanges: Perform action after changes, input properties
+ONDestroy: Perform cleanup
 */
