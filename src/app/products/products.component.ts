@@ -1,20 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { IProduct } from './product';
-import { filter } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { IProduct } from './iproduct';
+import { Subscription, filter } from 'rxjs';
+import { ProductsService } from './products.service';
 
 @Component({
   selector: 'pm-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css'],
 })
-export class ProductsComponent implements OnInit {
-  constructor() {}
+export class ProductsComponent implements OnInit, OnDestroy {
+  constructor(private productsService: ProductsService) {}
 
   pageTitle: string = 'Product List';
   imageWidth: number = 50;
   imageMargin: number = 2;
   showImage: boolean = false;
-  private _listFilter: string = '';
+  _listFilter: string = '';
+  errorMessage: string = '';
+  sub!: Subscription;
+
   get listFilter(): string {
     return this._listFilter;
   }
@@ -24,6 +28,7 @@ export class ProductsComponent implements OnInit {
     console.log('In setter:', value);
     this.filteredProducts = this.performFilter(value);
   }
+
   filteredProducts: IProduct[] = [];
   products: IProduct[] = [
     {
@@ -89,9 +94,20 @@ export class ProductsComponent implements OnInit {
     this.showImage = !this.showImage;
   }
   ngOnInit(): void {
-    this._listFilter = 'cart';
+    //subscribe has three classified actions next, error, and complete. these are keys are we map functions to it.
+    this.sub = this.productsService.getProducts().subscribe({
+      //assign this.sub to subscribe so we can unsubscribe during destroy lifecycle
+      next: (data) => {
+        this.products = data;
+        this.filteredProducts = this.products;
+      },
+      error: (err) => (this.errorMessage = err),
+    });
   }
 
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
   onRatingClicked(message: string): void {
     this.pageTitle = 'Product List ' + message;
   }
